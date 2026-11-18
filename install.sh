@@ -15,5 +15,5 @@ fi
 
 rm -rf "$DEST"
 ditto build/Insomniac.app "$DEST"
-open "$DEST"
+for _ in 1 2 3 4 5; do open "$DEST" 2>/dev/null && break; sleep 1; done
 echo "Installed to $DEST and launched."

@@ -6,7 +6,7 @@ import ServiceManagement
 
 enum Power {
     static let pmset = "/usr/bin/pmset"
-    static let sudoersPath = "/etc/sudoers.d/insomniac"
+    static let sudoersPath = "/etc/sudoers.d/insomnimac"
 
     @discardableResult
     static func run(_ path: String, _ args: [String]) -> (status: Int32, output: String) {
@@ -43,12 +43,12 @@ enum Power {
         let user = NSUserName()
         guard user.range(of: "^[A-Za-z0-9._-]+$", options: .regularExpression) != nil else { return false }
         let rule = "\(user) ALL=(root) NOPASSWD: \(pmset) -a disablesleep 0, \(pmset) -a disablesleep 1\n"
-        let tmp = FileManager.default.temporaryDirectory.appendingPathComponent("insomniac.sudoers")
+        let tmp = FileManager.default.temporaryDirectory.appendingPathComponent("insomnimac.sudoers")
         do { try rule.write(to: tmp, atomically: true, encoding: .utf8) } catch { return false }
         defer { try? FileManager.default.removeItem(at: tmp) }
 
         let shell = "/usr/sbin/visudo -cf '\(tmp.path)' && /usr/bin/install -m 0440 -o root -g wheel '\(tmp.path)' '\(sudoersPath)'"
-        let script = "do shell script \"\(shell)\" with administrator privileges with prompt \"Insomniac needs one-time permission to control lid-close sleep.\""
+        let script = "do shell script \"\(shell)\" with administrator privileges with prompt \"Insomnimac needs one-time permission to control lid-close sleep.\""
         return run("/usr/bin/osascript", ["-e", script]).status == 0
     }
 }
@@ -94,7 +94,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         loginItem.target = self
         menu.addItem(loginItem)
         menu.addItem(.separator())
-        let quit = NSMenuItem(title: "Quit Insomniac", action: #selector(quit), keyEquivalent: "q")
+        let quit = NSMenuItem(title: "Quit Insomnimac", action: #selector(quit), keyEquivalent: "q")
         quit.target = self
         menu.addItem(quit)
         menu.delegate = self
@@ -123,19 +123,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     @objc private func toggle() {
         cancelTimer()
-        setInsomniac(!isOn)
+        setInsomnimac(!isOn)
     }
 
     @objc private func enableTimed(_ sender: NSMenuItem) {
         cancelTimer()
-        guard setInsomniac(true) else { return }
+        guard setInsomnimac(true) else { return }
         let date = Date().addingTimeInterval(TimeInterval(sender.tag * 60))
         offDate = date
         // Wall-clock check every 15s so it stays accurate even if the timer is delayed.
         let t = Timer(timeInterval: 15, repeats: true) { [weak self] _ in
             guard let self, let end = self.offDate, Date() >= end else { return }
             self.cancelTimer()
-            self.setInsomniac(false)
+            self.setInsomnimac(false)
         }
         t.tolerance = 5
         RunLoop.main.add(t, forMode: .common)
@@ -151,7 +151,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     @discardableResult
-    private func setInsomniac(_ on: Bool) -> Bool {
+    private func setInsomnimac(_ on: Bool) -> Bool {
         var ok = Power.setDisableSleep(on)
         if !ok {
             guard Power.installSudoersRule() else { return false } // user cancelled
@@ -172,7 +172,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             assertionHeld = IOPMAssertionCreateWithName(
                 kIOPMAssertionTypePreventUserIdleSystemSleep as CFString,
                 IOPMAssertionLevel(kIOPMAssertionLevelOn),
-                "Insomniac mode" as CFString, &assertionID) == kIOReturnSuccess
+                "Insomnimac mode" as CFString, &assertionID) == kIOReturnSuccess
         } else if !on, assertionHeld {
             IOPMAssertionRelease(assertionID)
             assertionHeld = false
@@ -194,7 +194,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func refreshUI() {
         guard let button = statusItem?.button else { return }
         let name = isOn ? "cup.and.saucer.fill" : "moon.zzz"
-        let img = NSImage(systemSymbolName: name, accessibilityDescription: isOn ? "Insomniac on" : "Insomniac off")
+        let img = NSImage(systemSymbolName: name, accessibilityDescription: isOn ? "Insomnimac on" : "Insomnimac off")
         img?.isTemplate = true
         button.image = img
         var status = isOn ? "On — stays awake with lid closed" : "Off"
@@ -204,7 +204,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             fmt.timeStyle = .short
             status = "On until \(fmt.string(from: end))"
         }
-        button.toolTip = "Insomniac: \(status)"
+        button.toolTip = "Insomnimac: \(status)"
         hintItem?.title = status
         toggleItem?.isHidden = !isOn
         loginItem?.state = SMAppService.mainApp.status == .enabled ? .on : .off

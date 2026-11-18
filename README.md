@@ -4,6 +4,8 @@
 
 A tiny macOS menu bar app that keeps your Mac awake, **even with the lid closed**.
 
+![Insomnimac menu](Resources/menu-preview.png)
+
 ## Features
 
 - Lives in the menu bar (no Dock icon): 🌙 when off, ☕ when on

@@ -20,9 +20,7 @@ A tiny macOS menu bar app that keeps your Mac awake, **even with the lid closed*
 Requires macOS 13+ and the Xcode Command Line Tools (`xcode-select --install`).
 
 ```sh
-git clone <repo-url> insomnimac
-cd insomnimac
-./install.sh
+git clone https://github.com/oskob/insomnimac.git && cd insomnimac && sh install.sh
 ```
 
 `install.sh` compiles the app, installs it to `/Applications/Insomnimac.app`, and launches it. Run it again any time to rebuild and reinstall.

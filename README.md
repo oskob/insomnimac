@@ -1,7 +1,5 @@
 # Insomnimac
 
-<img src="Resources/AppIcon-preview.png" width="128" alt="Insomnimac icon">
-
 A tiny macOS menu bar app that keeps your Mac awake, **even with the lid closed**.
 
 ![Insomnimac menu](Resources/menu-preview.png)
